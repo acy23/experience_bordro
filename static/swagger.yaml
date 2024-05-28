@@ -1,0 +1,112 @@
+openapi: 3.0.0
+info:
+  title: Payroll API
+  description: API documentation for the Payroll Flask application
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+paths:
+  /api/create-payroll:
+    post:
+      summary: Bordro dosyalarını (pdf) kullanıcı id'si ile birlikte database'e yazan api. ui'da bir calisan icin dosya secilip kaydet butonuna basinca bu api cagirilmalidir. 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: string
+                  example: "12345"
+                pdf_base64:
+                  type: string
+                  example: "JVBERi0xLjQKJ..."
+      responses:
+        '200':
+          description: Payroll created successfully
+        '400':
+          description: Both 'userid' and 'pdf_base64' are required or Invalid base64 string
+  /api/get-payroll-by-userid:
+    get:
+      summary: Query'den parametre olarak userid alir. userid'ye göre database'den 'o ay icerisinde', 'henuz calisan tarafindan gorulmemis' bir bordro varsa doner. Yoksa 404 doner.
+      parameters:
+        - in: query
+          name: userid
+          required: true
+          schema:
+            type: string
+            example: "12345"
+      responses:
+        '200':
+          description: A payroll record for the specified user ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userid:
+                    type: string
+                    example: "12345"
+                  pdf_data:
+                    type: string
+                    example: "JVBERi0xLjQKJ..."
+        '400':
+          description: Parameter 'userid' is required
+        '404':
+          description: No unread payroll record found for the specified userid
+  /api/get-sent-payrolls:
+    get:
+      summary: Bir yukardaki userid parametresi alan apinin parametresiz hali. tum data icerisinde ayni filterle record'lari aratir. UI'da modal'daki datayi beslemek icin kullanilmalidir. API'den donen userid ye karsilik gelen kullanicilar icin bordro yuklendi olarak UI gosterimi yapilmalidir.
+      responses:
+        '200':
+          description: A list of payroll records for the specified period
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    userid:
+                      type: string
+                      example: "12345"
+                    pdf_data:
+                      type: string
+                      example: "JVBERi0xLjQKJ..."
+        '404':
+          description: No payroll records found for the specified period
+  /api/set-payroll-read:
+    post:
+      summary: Calisan uygulamasinda, get payroll by userid atildiktan sonra eger kullanici pdf donerse ve kullanici onayliyorum tarzi bi butona basarsa bu API cagirilmalidir. Kullanici icin assign edilen bordro'nun statusnu okunmus olarak update eder.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userid:
+                  type: string
+                  example: "12345"
+      responses:
+        '200':
+          description: Payroll marked as read
+        '400':
+          description: userid is required
+        '403':
+          description: payroll is already read or update failed
+  /api/healthcheck:
+    get:
+      summary: Healthcheck
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "OK"
