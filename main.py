@@ -12,7 +12,7 @@ from data.repositories.resource_repository import ResourceRepository
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all origins
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://trendyol:trendyol-bot-1234321@localhost:5432/exp_payroll'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://align:mm9wYNPefPa3@185.243.182.183:30432/exp_payroll'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -174,4 +174,4 @@ def send_static(path):
     return send_from_directory('static', path)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
