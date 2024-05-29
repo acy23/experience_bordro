@@ -134,6 +134,24 @@ def setPayrollRead():
     else:
         return jsonify({"message": "update failed"}), 403
 
+@app.route('/api/delete-payroll-by-userid', methods=['DELETE'])
+def deletePayrollByUserId():
+    userid = request.args.get('userid')
+
+    if userid is None:
+        return jsonify({"message": "Parameter 'userid' is required"}), 400
+
+    payroll_records = Resource.query.filter(Resource.userid == userid).all()
+
+    if not payroll_records:
+        return jsonify({"message": "No payroll records found for the specified userid"}), 404
+
+    for record in payroll_records:
+        db.session.delete(record)
+    db.session.commit()
+
+    return jsonify({"message": "Payroll records deleted successfully"}), 200
+
 @app.route('/api/healthcheck', methods=['GET'])
 def healthcheck():
     return jsonify({"message": "OK"}), 200

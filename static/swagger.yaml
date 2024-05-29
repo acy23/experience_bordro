@@ -110,3 +110,25 @@ paths:
                   message:
                     type: string
                     example: "OK"
+  /api/delete-payroll-by-userid:
+    delete:
+      summary: Test amacli kullanilmalidir. Parametrede verilen userId ile eslesen butun kayitlari siler.
+      parameters:
+        - in: query
+          name: userid
+          required: true
+          schema:
+            type: string
+            example: "12345"
+      responses:
+        '200':
+          description: Payroll records deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "OK"
+        
