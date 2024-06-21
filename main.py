@@ -12,7 +12,7 @@ from data.repositories.resource_repository import ResourceRepository
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all origins
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://trendyol:trendyol-bot-1234321@localhost:5432/exp_payroll'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://align:mm9wYNPefPa3@212.64.220.180:5432/exp_payroll'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -151,6 +151,20 @@ def deletePayrollByUserId():
     db.session.commit()
 
     return jsonify({"message": "Payroll records deleted successfully"}), 200
+
+@app.route('/api/delete-all', methods=['DELETE'])
+def deleteAllPayrolls():
+
+    payroll_records = Resource.query.all()
+
+    if not payroll_records:
+        return jsonify({"message": "No payroll records found for the specified userid"}), 404
+
+    for record in payroll_records:
+        db.session.delete(record)
+    db.session.commit()
+
+    return jsonify({"message": "All payrolls deleted successfully."}), 200
 
 @app.route('/api/healthcheck', methods=['GET'])
 def healthcheck():
